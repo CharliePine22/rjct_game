@@ -20,23 +20,40 @@ TITLE = "RJCT RPG"
 # Folders to get to images
 GAME_FOLDER = os.path.dirname(__file__)
 IMAGE_FOLDER = os.path.join(GAME_FOLDER, 'maps')
+BACKGROUND = pg.image.load(os.path.join(IMAGE_FOLDER, 'title_placeholder.png'))
+
+#RJCT Settings
+RYAN = 'maps/RJCT_RYAN.png'
+JR = 'maps/RJCT_JR.png'
+CJ = 'maps/RJCT_CJ.png'
+TONY = 'maps/RJCT_TONY.png'
+
+
 # Old man NPC settings
 OLD_MAN = pg.image.load(os.path.join(IMAGE_FOLDER, "npc_test.png"))
-OLD_MAN_PATH = [(554, 352), (564, 400), (534,362), (544, 352)] #tuples are destination coordinates
-OLD_MAN_TEXT = 'Greetings adventurers, welcome to Shiverbell. I would love to give you a proper tour, but right now, our town is being threatened by the mountain Yeti. If you encounter it, be sure to have a cardigan on you, here take this one, and be careful!'
+OLD_MAN_PORTRAIT = 'maps/old_man_thumbnail.png'
+OLD_MAN_PATH = [(554, 350), (574, 350), (534,350), (544, 350)] #tuples are destination coordinates
+OLD_MAN_TEXT = 'Greetings adventurers, welcome to Shiverbell. I would love to give you a proper tour, but right now, our town is being threatened by the mountain Yeti. Think you guys can handle it?'
+
 # Tony bronut settings
+# Get both images for aniamtion
 BRONUT1 = pg.image.load(os.path.join(IMAGE_FOLDER, "Asperite_Bronut1.png"))
 BRONUT1 = pg.transform.scale(BRONUT1, (75, 75))
-BRONUT_TEXT = 'PLEASE DONT EAT ME PLEASE, I JUST WANNA DANCE IN PEACE!'
+BRONUT2 = pg.image.load(os.path.join(IMAGE_FOLDER, "Asperite_Bronut2.png"))
+BRONUT2 = pg.transform.scale(BRONUT2, (75, 75))
+BRONUT_PORTRAIT = 'maps/bronut_portrait.png'
 BRONUT_PATH = [(400, 600), (500, 600), (456, 547), (450,500)]
+BRONUT_TEXT = 'PLEASE DONT EAT ME PLEASE, I JUST WANNA DANCE IN PEACE!'
 BGCOLOR = WHITE
-
+# Shopkeeper NPC
+SHOP_NPC = pg.image.load(os.path.join(IMAGE_FOLDER, 'sprite_0.png'))
+TEST = pg.image.load(os.path.join(IMAGE_FOLDER, 'snow_template1.jpg'))
 # Player Sprite Settings
 PLAYER_SPEED = 150
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
 # NPC Sprite Settings
-NPC_SPEED = 100
+NPC_SPEED = 50
 NPC_HIT_RECT = pg.Rect(0, 0, 30, 30)
 
 # Set how many tiles and how large each tile takes

@@ -8,7 +8,7 @@ class TextBox(pg.sprite.LayeredDirty):
         self.game = game
         self.image = image
         self.dialog_box = textboxify.TextBoxFrame(
-                text= text,
+                text=text,
                 text_width=600,
                 lines=5,
                 pos=(0, 0),
@@ -17,7 +17,7 @@ class TextBox(pg.sprite.LayeredDirty):
                 font_size=26,
                 bg_color=(8, 34, 79)
         )
-        self.dialog_box.set_portrait(image, size=(16, 16))
+        self.dialog_box.set_portrait(image, size=(16, 16)) # 400,400
         self.conversation = [self.dialog_box]
         
     def display_textbox(self):
@@ -28,6 +28,10 @@ class TextBox(pg.sprite.LayeredDirty):
             current_dialog = self.draw(self.game.screen)
             pg.display.update(current_dialog)
         self.wait_for_confirm()
+    
+    def menu_dialog(self):
+        for convo in self.main_menu_conversations:
+            self.dialog_box.set_text(convo)
     
     def wait_for_confirm(self):
         # Stop everything until the textbox is done rendering or user quits
