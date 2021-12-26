@@ -11,7 +11,6 @@ class Shop():
         pg.display.set_caption('RJCT Shop')
         self.npc = SHOP_NPC
         self.bg = pg.image.load(os.path.join(IMAGE_FOLDER, 'shop_placeholder.png'))
-        self.load_store()
         
     def load_store(self):
         self.map_data = []

@@ -16,17 +16,24 @@ WIDTH = 800
 HEIGHT = 800
 FPS = 60
 TITLE = "RJCT RPG"
+pg.font.init()
+MAIN_FONT = pg.font.SysFont('Arial', 20)
 
 # Folders to get to images
 GAME_FOLDER = os.path.dirname(__file__)
 IMAGE_FOLDER = os.path.join(GAME_FOLDER, 'maps')
 BACKGROUND = pg.image.load(os.path.join(IMAGE_FOLDER, 'title_placeholder.png'))
+TOWN_BG = pg.image.load(os.path.join(IMAGE_FOLDER, 'Background_Placeholder.png'))
+INVENTORY_PIC = pg.image.load(os.path.join(IMAGE_FOLDER, 'Inventory_UI.png'))
+BATTLE_BG = pg.image.load(os.path.join(IMAGE_FOLDER, 'BattleBG.png'))
+VICTORY_BG = pg.image.load(os.path.join(IMAGE_FOLDER, 'Congrats.png'))
 
 #RJCT Settings
 RYAN = 'maps/RJCT_RYAN.png'
 JR = 'maps/RJCT_JR.png'
 CJ = 'maps/RJCT_CJ.png'
 TONY = 'maps/RJCT_TONY.png'
+TONY_CARDIGAN = pg.image.load('maps/TonyCardigan.png')
 
 
 # Old man NPC settings

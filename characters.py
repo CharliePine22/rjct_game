@@ -68,12 +68,14 @@ class Player(pg.sprite.Sprite):
             self.vy = PLAYER_SPEED
         if self.x > 195 and self.x < 211 and self.y == 576 and keys[pg.K_RETURN]:
                 self.game.loading = True
+        if self.x > 370 and self.x < 430 and self.y < 110 and keys[pg.K_RETURN]:
+                self.game.battling = True
+
         
         # Reduces speed for diagnally moving
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071
-
 
     def move(self, dx=0, dy=0):
         # Move the x and y coordinates by however much the distance to dx and dy coordinates is
