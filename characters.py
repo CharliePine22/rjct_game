@@ -43,16 +43,27 @@ class Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         # Image for what the sprite looks like
-        self.image = pg.image.load(os.path.join(IMAGE_FOLDER, "RJCT_TONY.png")).convert()
+        self.image = pg.image.load(TONY).convert_alpha()
         self.image = pg.transform.scale(self.image, (35, 35))
+        self.index = 0
         # Colorkey tells pygame to ignore a certain color so the background of sprite is transparent
-        self.image.set_colorkey(YELLOW)
+        self.image.set_colorkey(NAVY)
         # Rect is a pygame rectangle that encloses the sprite(useful for collisions, movement, etc.)
         self.rect = self.image.get_rect()
         # Used for spawning in on the map
         self.x = x * TILESIZE
         self.y = y * TILESIZE
 
+    def change_character(self):
+        # Function to change current player sprite
+        self.player_sprites = [RYAN, JR, CJ, TONY]
+        if self.index < len(self.player_sprites):
+            self.image = pg.image.load(self.player_sprites[self.index])
+            self.image = pg.transform.scale(self.image, (35, 35))
+            self.index += 1
+        if self.index >= len(self.player_sprites):
+            self.index = 0 
+            
     def get_keys(self):
         # Give player velocity for smoother movement
         self.vx, self.vy = 0, 0
@@ -67,11 +78,10 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_DOWN]:
             self.vy = PLAYER_SPEED
         if self.x > 195 and self.x < 211 and self.y == 576 and keys[pg.K_RETURN]:
-                self.game.loading = True
+                self.game.loading_shop = True
         if self.x > 370 and self.x < 430 and self.y < 110 and keys[pg.K_RETURN]:
                 self.game.battling = True
 
-        
         # Reduces speed for diagnally moving
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071

@@ -4,12 +4,10 @@ import os
 from settings import *
 from characters import *
 from shop import *
-import pygame_menu
 from textbox import*
 from inventory import *
 from battle import *
-from pygame import mixer
-
+import pygbutton
 
 # TODO LIST
 # 1. Transitions/Lighting
@@ -17,7 +15,6 @@ from pygame import mixer
 # 3. Textbox Confirmation
 # 4. Shop Update
 # 5. Housewives of Miami
-
 
 class Game:
     def __init__(self):
@@ -27,27 +24,42 @@ class Game:
         pg.display.set_caption(TITLE)
         # Clock handles how fast the game moves, can vary with FPS variables
         self.clock = pg.time.Clock()
+        self.current_map = 'Town'
         self.main_menu_pictures = ['title_placeholder.png', 'title_placeholder1.png']
         self.index = 0
         self.image = self.main_menu_pictures[self.index]
         self.update_time = pg.time.get_ticks()
         self.bg = pg.image.load(os.path.join(
-            IMAGE_FOLDER, 'Background_Placeholder.png'))
+            IMAGE_FOLDER, 'town_map.png'))
         # Allow the user to hold the key down and it will auto repeat that key every .5 seconds
         pg.key.set_repeat(500, 100)
-        self.loading = False  # SHOP MAP TRANSITION
-        if self.loading == False:
-            self.load_map()
+        self.loading_shop = False  # SHOP MAP TRANSITION
         self.main_menu_running = True
         self.inventory_open = False
         self.battling = False
+        self.time_counter = 0
+        self.image_1 = pg.image.load(os.path.join(IMAGE_FOLDER, "Animation.png"))
+        self.image_2 = pg.image.load(os.path.join(IMAGE_FOLDER, "Animation2.png"))
+        self.image_3 = pg.image.load(os.path.join(IMAGE_FOLDER, "Animation3.png"))
+        self.image_4 = pg.image.load(os.path.join(IMAGE_FOLDER, "Animation4.png"))
+        self.image_5 = pg.image.load(os.path.join(IMAGE_FOLDER, "Animation5.png"))
+        
+        # new_game = pg.image.load(os.path.join(IMAGE_FOLDER, "New game button.png"))
+        self.title = pg.image.load(os.path.join(IMAGE_FOLDER, "RJCT Adventure title.png"))
 
-    def load_map(self):
+        # Buttons
+        self.main_menu_button = pygbutton.PygButton((100,700,200,50), normal = os.path.join(IMAGE_FOLDER, "New_game_button.png"))
+        self.load_game_button = pygbutton.PygButton((350,700,200,50), normal = os.path.join(IMAGE_FOLDER, "Load game button.png"))
+        self.exit_game_button = pygbutton.PygButton((600,720,200,50), normal = os.path.join(IMAGE_FOLDER, "Exit game button.png"))
+        self.list_of_buttons =  [self.main_menu_button, self.load_game_button, self.exit_game_button]
+
+    def load_map(self, file):
         # Grab map boundries from text file
         self.map_data = []
-        with open(os.path.join(IMAGE_FOLDER, 'map.txt'), 'rt') as f:
+        with open(os.path.join(IMAGE_FOLDER, file), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
+        
 
     def new(self):
         # Grab all the sprites and place them on the screen upon starting
@@ -56,7 +68,32 @@ class Game:
         self.walls = pg.sprite.Group()
         self.npcs = pg.sprite.Group()
         self.textboxes = pg.sprite.Group()
+        if not self.loading_shop:
+            self.load_map('map.txt')
+            # Loop through map.txt file to get access to rows and columns
+            for row, tiles in enumerate(self.map_data):
+                for col, tile in enumerate(tiles):
+                    if tile == '1':
+                        Wall(self, col, row)
+                    if tile == 'P':
+                        self.player = Player(self, col, row)
+                    if tile == 'N':
+                        NPC(self, col, row, OLD_MAN, OLD_MAN_PATH,
+                            OLD_MAN_TEXT, OLD_MAN_PORTRAIT, False)
+                    if tile == 'D':
+                        NPC(self,
+                            col, row, BRONUT1, None,
+                            BRONUT_TEXT, BRONUT_PORTRAIT, True)
+                        
+    def new2(self):
+        # Grab all the sprites and place them on the screen upon starting
 
+        self.all_sprites = pg.sprite.Group()
+        self.player_sprite = pg.sprite.Group()
+        self.walls = pg.sprite.Group()
+        self.npcs = pg.sprite.Group()
+        self.textboxes = pg.sprite.Group()
+       
         # Loop through map.txt file to get access to rows and columns
         for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
@@ -64,13 +101,7 @@ class Game:
                     Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
-                if tile == 'N':
-                    NPC(self, col, row, OLD_MAN, OLD_MAN_PATH,
-                        OLD_MAN_TEXT, OLD_MAN_PORTRAIT, False)
-                if tile == 'D':
-                    NPC(self, col, row, BRONUT1, None,
-                        BRONUT_TEXT, BRONUT_PORTRAIT, True)
-
+                            
     def run(self):
         # Game loop, if self.playing is changed to false, the game stops
         self.playing = True
@@ -95,23 +126,26 @@ class Game:
     def update(self):
         # update each sprite appropriately
         self.all_sprites.update()
-        pg.display.set_caption('{}'.format(self.player.y))
 
     def draw(self):
         # Draw everything onto the screen
         self.screen.fill(BGCOLOR)
         if self.battling:
             Battle(self)
-        if self.loading:
+        if self.loading_shop:
+            print('SHOP')
+            self.load_map('shop.txt')
             self.shop = Shop(self)
-            self.shop.load_store()
-            self.shop.display_store()
-            self.screen.blit(self.shop.bg, (0, 0))
+            for row, tiles in enumerate(self.map_data):
+                for col, tile in enumerate(tiles):
+                    if tile == '1':
+                        Wall(self, col, row)
+                    if tile == 'P':
+                        self.player = Player(self, col, row)
             self.player_sprite.draw(self.screen)
-        else:
+        if self.loading_shop == False:  
             self.screen.blit(self.bg, (0, 0))
             self.all_sprites.draw(self.screen)
-
         pg.display.flip()
 
     def events(self):
@@ -126,9 +160,10 @@ class Game:
                     self.quit()
                 elif event.key == pg.K_i:
                     self.inventory = Inventory(self)
+                elif event.key == pg.K_r:
+                    self.player.change_character()
 
     def start_game(self):
-        self.main_menu.disable()
         self.clock.tick(200)
         self.screen.blit(BACKGROUND, (0, 0))
         pg.display.update()
@@ -144,52 +179,63 @@ class Game:
         self.main_menu_running = False
 
     def show_start_screen(self):
-        self.animation_cooldown = 200
-         # If the time since starting is larger than the cooldown, go to the next frame
-        if pg.time.get_ticks() - self.update_time > self.animation_cooldown:
-            # Reset update time to current time to keep running loop
-            self.update_time = pg.time.get_ticks()
-            self.index += 1
-        # If there are no images/frames left, reset index to 0
-        if self.index >= len(self.main_menu_pictures):
-            self.index = 0
-        # self.main_menu_bg = pygame_menu.baseimage.BaseImage(image_path=os.path.join(IMAGE_FOLDER, 'title_placeholder.png'))
-        if self.index == 0:
-            self.main_menu_bg = pygame_menu.baseimage.BaseImage(image_path=os.path.join(IMAGE_FOLDER, self.image))
-        else:
-            self.main_menu_bg = pygame_menu.baseimage.BaseImage(image_path=os.path.join(IMAGE_FOLDER, self.image))
-        
-        self.menu_theme = pygame_menu.Theme(
-            background_color=WHITE,
-            title_background_color ='#08224f',
-            title_font_color = WHITE,
-            title_bar_style = pygame_menu.widgets.MENUBAR_STYLE_ADAPTIVE)
-        self.menu_theme.background_color = self.main_menu_bg
-        self.main_menu = pygame_menu.Menu('RJCT Adventure', 800, 800, theme=self.menu_theme)
-        self.main_menu.add.button('New Game', self.start_game, font_color=WHITE)
-        self.main_menu.add.button('Load Game', self.start_game, font_color=WHITE)
-        self.main_menu.add.button('Exit', self.quit, font_color=WHITE)
-        self.main_menu
-        self.main_menu.mainloop(self.screen)
-         
+        animate = True
+        while animate:
+            pg.time.Clock().tick(60)
+            the_clock_tick = self.clock.tick()
+            self.time_counter += the_clock_tick
+
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    pg.quit()
+                    break
+            if self.time_counter < 250:
+                self.screen.blit(self.image_1, (0,0))
+            if self.time_counter >= 250 and self.time_counter < 500:
+                self.screen.blit(self.image_2, (0,0))
+            if self.time_counter >= 500 and self.time_counter < 750:
+                self.screen.blit(self.image_3, (0,0))
+            if self.time_counter >= 750 and self.time_counter < 1000:
+                self.screen.blit(self.image_4, (0,0))
+            if self.time_counter >= 1000 and self.time_counter < 1250:
+                self.screen.blit(self.image_5, (0,0))
+            if self.time_counter >= 1250:
+                self.time_counter = 0
+                
+            if 'click' in self.main_menu_button.handleEvent(event):
+                self.start_game()  
+                animate = False
+            if 'click' in self.load_game_button.handleEvent(event):
+                pg.quit()
+            if 'click' in self.exit_game_button.handleEvent(event):
+                pg.quit()
+                    
+            for button in self.list_of_buttons:
+                button.draw(self.screen)
+            self.screen.blit(self.title, (0,0))
+            pg.display.flip()
+            
          
     def show_go_screen(self):
         # Maybe the confirmation to start game?
         pass
 
-
 # create the game object
 g = Game()
 
 while g.main_menu_running:
-    mixer.init()
-    mixer.music.load('maps/MainMenuMusic.mp3')
-    mixer.music.play(-1) 
+    # mixer.init()
+    # mixer.music.load('maps/MainMenuMusic.mp3')
+    # mixer.music.play(-1) 
     g.show_start_screen() 
     while not g.main_menu_running:
-        mixer.music.stop()
-        mixer.music.load('maps/Town.mp3')
-        mixer.music.play(-1) 
-        g.new()
-        g.run()
-        g.show_go_screen()
+        # mixer.music.stop()
+        # mixer.music.load('maps/Town.mp3')
+        # mixer.music.play(-1) 
+        if g.loading_shop:
+            g.new2()
+            g.run()
+        if g.loading_shop == False:
+            g.new()
+            g.run()
+            g.show_go_screen()
