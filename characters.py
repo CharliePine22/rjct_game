@@ -44,22 +44,22 @@ class Player(pg.sprite.Sprite):
         self.game = game
         # Image for what the sprite looks like
         self.image = pg.image.load(TONY).convert_alpha()
-        self.image = pg.transform.scale(self.image, (35, 35))
+        self.image = pg.transform.scale(self.image, (64, 64)) # (112, 112) for shop (64, 64)
         self.index = 0
         # Colorkey tells pygame to ignore a certain color so the background of sprite is transparent
         self.image.set_colorkey(NAVY)
         # Rect is a pygame rectangle that encloses the sprite(useful for collisions, movement, etc.)
         self.rect = self.image.get_rect()
         # Used for spawning in on the map
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.x = x 
+        self.y = y 
 
     def change_character(self):
         # Function to change current player sprite
         self.player_sprites = [RYAN, JR, CJ, TONY]
         if self.index < len(self.player_sprites):
             self.image = pg.image.load(self.player_sprites[self.index])
-            self.image = pg.transform.scale(self.image, (35, 35))
+            self.image = pg.transform.scale(self.image, (50, 50))
             self.index += 1
         if self.index >= len(self.player_sprites):
             self.index = 0 
@@ -77,7 +77,7 @@ class Player(pg.sprite.Sprite):
             self.vy = -PLAYER_SPEED
         if keys[pg.K_DOWN]:
             self.vy = PLAYER_SPEED
-        if self.x > 195 and self.x < 211 and self.y == 576 and keys[pg.K_RETURN]:
+        if self.x > 256 and self.x < 289 and self.y == 608 and keys[pg.K_RETURN]:
                 self.game.loading_shop = True
         if self.x > 370 and self.x < 430 and self.y < 110 and keys[pg.K_RETURN]:
                 self.game.battling = True
@@ -86,10 +86,16 @@ class Player(pg.sprite.Sprite):
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071
+    
+    def collide_with_walls(self, dx=0, dy=0):
+        for wall in self.game.walls:
+            if wall.x == self.x + dx and wall.y == self.y + dy:
+                return True
+        return False
 
     def move(self, dx=0, dy=0):
         # Move the x and y coordinates by however much the distance to dx and dy coordinates is
-        if not self.collide_with_wall(dx,dy):
+        if not self.collide_with_walls(dx,dy):
             self.x += dx
             self.y += dy
         
@@ -97,37 +103,43 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.npcs, False)
         if hits:
             # walking right
-            if self.vx > 0:
+            if self.x > 0:
+                print('RIGHT')
                 self.x = hits[0].rect.left - self.rect.width
-                self.vx = 0
+                self.x -= 1
                 self.rect.x = self.x
             # walking left
-            if self.vx < 0:
+            if self.x < 0:
+                print('LEFT')
                 self.x = hits[0].rect.right
-                self.vx = 0
+                self.x += 1
                 self.rect.x = self.x
             # walking down
-            if self.vy > 0:
+            if self.y > 0:
+                print('DOWN')
                 self.y = hits[0].rect.top - self.rect.height
-                self.vy = 0
+                self.y -= 1
                 self.rect.y = self.y
             # walking up
-            if self.vy < 0:
+            if self.y < 0:
+                print('UP')
                 self.y = hits[0].rect.bottom
-                self.vy = 0
+                self.y += 1
                 self.rect.y = self.y
-                
-        self.get_keys()
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
-        self.rect.x = self.x
-        collide_with_wall(self, self.game.walls, 'x')
-        self.rect.y = self.y
-        collide_with_wall(self, self.game.walls, 'y')
+        
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE        
+        # self.get_keys()
+        # self.x += self.vx * self.game.dt
+        # self.y += self.vy * self.game.dt
+        # self.rect.x = self.x
+        # collide_with_wall(self, self.game.walls, 'x')
+        # self.rect.y = self.y
+        # collide_with_wall(self, self.game.walls, 'y')
       
 #################################### NPC CLASS ##################################################   
 class NPC(pg.sprite.Sprite):
-    def __init__(self, game, x, y, image, waypoints, text, portrait, animate):
+    def __init__(self, game, x, y, image, waypoints, text, portrait, size, animate):
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -149,7 +161,8 @@ class NPC(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.portrait = portrait
-        self.textbox = TextBox(self.game, self.text, self.portrait)
+        self.size = size
+        self.textbox = TextBox(self.game, self.text, self.portrait, self.size)
         # NPC Path Creation 
         self.waypoints = waypoints
         # For looping to next target destination

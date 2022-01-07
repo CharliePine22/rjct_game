@@ -50,18 +50,6 @@ class Battle():
             self.game.screen.blit(self.defend_text, (100,75))
             self.game.screen.blit(self.flee_text, (200,75))
 
-            # Ryan
-            # ryan_hp = df[df['character'] == 'ryan']['hp'].values[0]
-            ryan_hp_display = MAIN_FONT.render(str(self.ryan_hp), True, (0, 0, 0))
-            ryan_total_hp = MAIN_FONT.render(str(' / 10'), True, (0, 0, 0)) # STRING
-            if self.ryan_hp > 0:
-                pg.draw.rect(self.game.screen,RED,(70,450,100,25))
-                pg.draw.rect(self.game.screen,GREEN,(70,450,10*self.ryan_hp,25))
-            else:
-                pg.draw.rect(self.game.screen,RED,(250,450,100,25))
-            self.game.screen.blit(ryan_hp_display, (90, 500))
-            self.game.screen.blit(ryan_total_hp, (100, 500))
-            
             if self.turn == 1 and self.ryan_hp > 0:
                 self.game.screen.blit(self.ryan_turn, (65, 430))
             if self.turn == 2 and self.jr_hp > 0:
@@ -70,6 +58,19 @@ class Battle():
                 self.game.screen.blit(self.charlie_turn, (455, 400))
             if self.turn == 4 and self.tony_hp > 0:
                 self.game.screen.blit(self.tony_turn, (660, 400))
+            
+            # Ryan
+            # ryan_hp = df[df['character'] == 'ryan']['hp'].values[0]
+            ryan_hp_display = MAIN_FONT.render(str(self.ryan_hp), True, (0, 0, 0))
+            ryan_total_hp = MAIN_FONT.render(str(' / 10'), True, (0, 0, 0)) # STRING
+            if self.ryan_hp > 0:
+                pg.draw.rect(self.game.screen,RED,(70,450,100,25))
+                pg.draw.rect(self.game.screen,GREEN,(70,450,10*self.ryan_hp,25))
+            else:
+                self.ryan_hp = 0
+                pg.draw.rect(self.game.screen,RED,(70,450,100,25))
+            self.game.screen.blit(ryan_hp_display, (90, 500))
+            self.game.screen.blit(ryan_total_hp, (100, 500))
             
             # Jr
             jr_hp_display = MAIN_FONT.render(str(self.jr_hp), True, (0, 0, 0))
@@ -105,7 +106,7 @@ class Battle():
                 pg.draw.rect(self.game.screen,GREEN,(650,450,10*self.tony_hp,25))
             else:
                 self.tony_hp = 0
-                pg.draw.rect(self.game.screen,RED,(250,450,100,25))
+                pg.draw.rect(self.game.screen,RED,(650,450,100,25))
             self.game.screen.blit(tony_hp_display, (690, 500))
             self.game.screen.blit(tony_total_hp, (700, 500))
 
@@ -121,6 +122,7 @@ class Battle():
                 self.game.screen.blit(VICTORY_BG, (0,0))
                 pg.mixer.stop()
                 self.game.battling = False
+                break
                         
             pg.display.update()
 
@@ -142,6 +144,8 @@ class Battle():
                                 break
                             if event.key == pg.K_f:
                                 self.game.battling = False
+                            if event.key == pg.K_d:
+                                self.defending = True
                     else:
                         print('RYAN OUT')
                         self.turn += 1

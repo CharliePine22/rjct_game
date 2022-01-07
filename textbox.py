@@ -3,10 +3,11 @@ import textboxify
 from settings import *
 
 class TextBox(pg.sprite.LayeredDirty):
-    def __init__(self, game, text, image):
+    def __init__(self, game, text, image, size):
         pg.sprite.LayeredDirty.__init__(self)
         self.game = game
         self.image = image
+        self.size = size
         self.dialog_box = textboxify.TextBoxFrame(
                 text=text,
                 text_width=600,
@@ -17,7 +18,7 @@ class TextBox(pg.sprite.LayeredDirty):
                 font_size=26,
                 bg_color=(8, 34, 79)
         )
-        self.dialog_box.set_portrait(image, size=(16, 16)) # 400,400
+        self.dialog_box.set_portrait(image, size=size) # 400,400
         self.conversation = [self.dialog_box]
         
     def display_textbox(self):

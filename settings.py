@@ -38,19 +38,21 @@ TONY_CARDIGAN = pg.image.load('maps/TonyCardigan.png')
 
 # Old man NPC settings
 OLD_MAN = pg.image.load(os.path.join(IMAGE_FOLDER, "npc_test.png"))
+OLD_MAN = pg.transform.scale(OLD_MAN, (64,112))
 OLD_MAN_PORTRAIT = 'maps/old_man_thumbnail.png'
 OLD_MAN_PATH = [(554, 350), (574, 350), (534,350), (544, 350)] #tuples are destination coordinates
 OLD_MAN_TEXT = 'Greetings adventurers, welcome to Shiverbell. I would love to give you a proper tour, but right now, our town is being threatened by the mountain Yeti. Think you guys can handle it?'
 
 # Tony bronut settings, Get both images for aniamtion
 BRONUT1 = pg.image.load(os.path.join(IMAGE_FOLDER, "Asperite_Bronut1.png"))
-BRONUT1 = pg.transform.scale(BRONUT1, (75, 75))
+BRONUT1 = pg.transform.scale(BRONUT1, (112, 112))
 BRONUT2 = pg.image.load(os.path.join(IMAGE_FOLDER, "Asperite_Bronut2.png"))
-BRONUT2 = pg.transform.scale(BRONUT2, (75, 75))
-BRONUT_PORTRAIT = 'maps/bronut_portrait.png'
+BRONUT2 = pg.transform.scale(BRONUT2, (112, 112))
+BRONUT_PORTRAIT = 'maps/donut_poster.png'
 BRONUT_PATH = [(400, 600), (500, 600), (456, 547), (450,500)]
 BRONUT_TEXT = 'PLEASE DONT EAT ME PLEASE, I JUST WANNA DANCE IN PEACE!'
 BGCOLOR = WHITE
+DONUT_POSTER = pg.image.load(os.path.join(IMAGE_FOLDER, 'donut_poster.png'))
 
 # Shopkeeper NPC
 SHOP_NPC = pg.image.load(os.path.join(IMAGE_FOLDER, 'sprite_0.png'))
